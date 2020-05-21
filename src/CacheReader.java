@@ -31,7 +31,15 @@ public class CacheReader {
         return cs;
     }
 
-    public void readRequest() {
-
+    public Request readRequest() {
+        if (sc.hasNextLine()) {
+            String[] requestParts = sc.nextLine().split(" ");
+            if (requestParts.length == 1)
+                return null;
+            int type = Integer.parseInt(requestParts[0]);
+            long address = Long.parseLong(requestParts[1], 16);
+            return new Request(address, type);
+        }
+        return null;
     }
 }
