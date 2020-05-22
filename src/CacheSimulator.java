@@ -39,7 +39,7 @@ public class CacheSimulator {
     }
 
     public void copyBackDirties() {
-        dCache.copyBackDirties(dcStats);
+        dCache.copyBackDirties();
     }
 
     private boolean isSplit() {

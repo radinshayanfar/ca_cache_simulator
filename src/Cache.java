@@ -19,10 +19,10 @@ public class Cache {
         sets[block % sets.length].request(read, block / sets.length, stats);
     }
 
-    public void copyBackDirties(Statistics stats) {
+    public void copyBackDirties() {
         for (Set s :
                 sets) {
-            s.copyBackDirties(stats);
+            s.copyBackDirties();
         }
     }
 

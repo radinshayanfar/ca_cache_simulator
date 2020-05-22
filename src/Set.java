@@ -107,7 +107,7 @@ public class Set {
         }
     }
 
-    public void copyBackDirties(Statistics stats) {
+    public void copyBackDirties() {
         if (config.writeHitPolicy != WritePolicy.WRITE_BACK)
             return;
 
@@ -115,7 +115,6 @@ public class Set {
         while (current != null) {
             if (current.isDirty()) {
                 Statistics.incCopyBackedWords(config.blockSize / Statistics.WORD_SIZE);
-//                System.out.println("here");
             }
             current = current.next;
         }
