@@ -3,8 +3,7 @@ import java.io.FileNotFoundException;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-//        FileInputStream fis = new FileInputStream("PubliclyAvailableTestCases/traces/r4.trace");
-
+//        FileInputStream fis = new FileInputStream("PubliclyAvailableTestCases/traces/r2.trace");
 //        CacheReader cacheReader = new CacheReader(fis);
         CacheReader cacheReader = new CacheReader(System.in);
         CacheSimulator cacheSimulator = cacheReader.readCache();

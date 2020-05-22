@@ -65,7 +65,7 @@ public class Set {
         // Evicting tail
         stats.incReplacement();
         if (config.writeHitPolicy == WritePolicy.WRITE_BACK && tail!= null && tail.isDirty()) {
-            stats.incCopyBackedBlocks();
+            stats.incCopyBackedWords(config.blockSize / Statistics.WORD_SIZE);
         }
         if (tail == head) {
             head = tail = null;
@@ -76,16 +76,16 @@ public class Set {
         addHead(new Block(tag));
     }
 
-    public boolean writeHit(long tag, boolean updateStats) {
+    public boolean writeHit(long tag, boolean updateHitStats) {
         Block current = head;
         while (current != null) {
             if (current.getTag() == tag) {
                 if (config.writeHitPolicy == WritePolicy.WRITE_BACK) {
                     current.setDirty();
                 } else {
-                    stats.incCopyBackedBlocks();
+                    stats.incCopyBackedWords(1);
                 }
-                if (updateStats)
+                if (updateHitStats)
                     stats.incHit();
                 makeHead(current);
                 return true;
@@ -98,7 +98,7 @@ public class Set {
 
     private void writeMiss(long tag) {
         if (config.writeMissPolicy == WritePolicy.WRITE_AROUND) {
-            stats.incCopyBackedBlocks();
+            stats.incCopyBackedWords(1);
             stats.incMiss();
         } else {
             readMiss(tag);
@@ -107,10 +107,13 @@ public class Set {
     }
 
     public void copyBackDirties() {
+        if (config.writeHitPolicy != WritePolicy.WRITE_BACK)
+            return;
+
         Block current = head;
         while (current != null) {
             if (current.isDirty()) {
-                stats.incCopyBackedBlocks();
+                stats.incCopyBackedWords(config.blockSize / Statistics.WORD_SIZE);
             }
             current = current.next;
         }

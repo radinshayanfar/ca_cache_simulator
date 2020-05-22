@@ -7,7 +7,7 @@ public class Statistics {
     private int replacements;
 
     private int fetchedBlocks;
-    private int copyBackedBlocks;
+    private int copyBackedWords;
 
     public Statistics(int blockSize) {
         this.blockSize = blockSize;
@@ -29,8 +29,8 @@ public class Statistics {
         fetchedBlocks++;
     }
 
-    public void incCopyBackedBlocks() {
-        copyBackedBlocks++;
+    public void incCopyBackedWords(int amount) {
+        copyBackedWords += amount;
     }
 
     public int getAccesses() {
@@ -61,8 +61,8 @@ public class Statistics {
         return fetchedBlocks;
     }
 
-    public int getCopyBackedBlocks() {
-        return copyBackedBlocks;
+    public int getCopyBackedWords() {
+        return copyBackedWords;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Statistics {
                 ", misses=" + misses +
                 ", replacements=" + replacements +
                 ", fetchedBlocks=" + fetchedBlocks +
-                ", copyBackedBlocks=" + copyBackedBlocks +
+                ", copyBackedBlocks=" + copyBackedWords +
                 '}';
     }
 }

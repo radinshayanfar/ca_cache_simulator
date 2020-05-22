@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class CacheSimulator {
     private final Cache iCache, dCache;
     private final Configuration config;
@@ -61,7 +59,7 @@ public class CacheSimulator {
         ret.append(dCache.toString());
         ret.append("TRAFFIC (in words)\n");
         ret.append("demand fetch: ").append((iCache.stats.getFetchedBlocks() + dCache.stats.getFetchedBlocks()) * Statistics.WORD_SIZE).append("\n");
-        ret.append("copies back: ").append(dCache.stats.getCopyBackedBlocks() * Statistics.WORD_SIZE).append("\n");
+        ret.append("copies back: ").append(dCache.stats.getCopyBackedWords()).append("\n");
         return ret.toString();
     }
 }
