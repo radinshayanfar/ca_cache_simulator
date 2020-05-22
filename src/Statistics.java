@@ -6,8 +6,8 @@ public class Statistics {
     private int misses;
     private int replacements;
 
-    private int fetchedBlocks;
-    private int copyBackedWords;
+    private static int fetchedBlocks;
+    private static int copyBackedWords;
 
     public Statistics(int blockSize) {
         this.blockSize = blockSize;
@@ -25,11 +25,11 @@ public class Statistics {
         replacements++;
     }
 
-    public void incFetchedBlocks() {
+    public static void incFetchedBlocks() {
         fetchedBlocks++;
     }
 
-    public void incCopyBackedWords(int amount) {
+    public static void incCopyBackedWords(int amount) {
         copyBackedWords += amount;
     }
 
@@ -57,23 +57,22 @@ public class Statistics {
         return replacements;
     }
 
-    public int getFetchedBlocks() {
+    public static int getFetchedBlocks() {
         return fetchedBlocks;
     }
 
-    public int getCopyBackedWords() {
+    public static int getCopyBackedWords() {
         return copyBackedWords;
     }
 
     @Override
     public String toString() {
-        return "Statistics{" +
-                "accesses=" + getAccesses() +
-                ", hits=" + hits +
-                ", misses=" + misses +
-                ", replacements=" + replacements +
-                ", fetchedBlocks=" + fetchedBlocks +
-                ", copyBackedBlocks=" + copyBackedWords +
-                '}';
+        StringBuilder ret = new StringBuilder();
+        ret.append("accesses: ").append(getAccesses()).append("\n");
+        ret.append("misses: ").append(getMisses()).append("\n");
+        ret.append("miss rate: ").append(String.format("%.4f", getMissRate()));
+        ret.append(" (hit rate ").append(String.format("%.4f", getHitRate())).append(")\n");
+        ret.append("replace: ").append(getReplacements()).append("\n");
+        return ret.toString();
     }
 }

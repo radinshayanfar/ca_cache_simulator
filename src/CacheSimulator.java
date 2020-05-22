@@ -1,11 +1,13 @@
 public class CacheSimulator {
     private final Cache iCache, dCache;
     private final Configuration config;
+    private final Statistics dcStats, icStats;
     private final boolean isHarvard;
 
     public CacheSimulator(int blockSize, boolean isHarvard, int associativity, WritePolicy writeHit, WritePolicy writeMiss, int... cSizes) {
         this.isHarvard = isHarvard;
-
+//        if (isSplit())
+//            System.out.println(0 / 0);
         config = new Configuration(blockSize, writeHit, writeMiss, associativity);
         if (isSplit()) {
             iCache = new Cache(cSizes[0], config);
@@ -14,24 +16,30 @@ public class CacheSimulator {
             iCache = new Cache(0, config);
             dCache = new Cache(cSizes[0], config);
         }
+        dcStats = new Statistics(blockSize);
+        icStats = new Statistics(blockSize);
+
     }
 
     public void request(int type, long address) {
         switch (type) {
             case 0:
-                dCache.request(true, address);
+                dCache.request(true, address, dcStats);
                 break;
             case 1:
-                dCache.request(false, address);
+                dCache.request(false, address, dcStats);
                 break;
             case 2:
-                iCache.request(true, address);
+                if (isSplit())
+                    iCache.request(true, address, icStats);
+                else
+                    dCache.request(true, address, icStats);
                 break;
         }
     }
 
     public void copyBackDirties() {
-        dCache.copyBackDirties();
+        dCache.copyBackDirties(dcStats);
     }
 
     private boolean isSplit() {
@@ -54,12 +62,12 @@ public class CacheSimulator {
         ret.append("Allocation policy: ").append(config.writeMissPolicy == WritePolicy.WRITE_ALLOCATE ? "WRITE ALLOCATE" : "WRITE NO ALLOCATE").append("\n");
         ret.append("\n***CACHE STATISTICS***\n");
         ret.append("INSTRUCTIONS\n");
-        ret.append(iCache.toString());
+        ret.append(icStats.toString());
         ret.append("DATA\n");
-        ret.append(dCache.toString());
+        ret.append(dcStats.toString());
         ret.append("TRAFFIC (in words)\n");
-        ret.append("demand fetch: ").append((iCache.stats.getFetchedBlocks() + dCache.stats.getFetchedBlocks()) * Statistics.WORD_SIZE).append("\n");
-        ret.append("copies back: ").append(dCache.stats.getCopyBackedWords()).append("\n");
+        ret.append("demand fetch: ").append(Statistics.getFetchedBlocks() * Statistics.WORD_SIZE).append("\n");
+        ret.append("copies back: ").append(Statistics.getCopyBackedWords()).append("\n");
         return ret.toString();
     }
 }

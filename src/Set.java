@@ -2,20 +2,21 @@ public class Set {
     Block head, tail;
     long size;
     private final Configuration config;
-    private final Statistics stats;
+    private Statistics stats;
 
-    public Set(Configuration config, Statistics stats) {
+    public Set(Configuration config) {
         this.config = config;
-        this.stats = stats;
     }
 
-    public void request(boolean read, long tag) {
+    public void request(boolean read, long tag, Statistics stats) {
+        this.stats = stats;
         if (read) {
             if (!readHit(tag))
                 readMiss(tag);
         } else if (!writeHit(tag, true)) {
             writeMiss(tag);
         }
+        this.stats = null;
     }
 
     private boolean readHit(long tag) {
@@ -55,7 +56,7 @@ public class Set {
 
     public void readMiss(long tag) {
         stats.incMiss();
-        stats.incFetchedBlocks();
+        Statistics.incFetchedBlocks();
         if (size < config.associativity) {
             addHead(new Block(tag));
             size++;
@@ -65,7 +66,7 @@ public class Set {
         // Evicting tail
         stats.incReplacement();
         if (config.writeHitPolicy == WritePolicy.WRITE_BACK && tail!= null && tail.isDirty()) {
-            stats.incCopyBackedWords(config.blockSize / Statistics.WORD_SIZE);
+            Statistics.incCopyBackedWords(config.blockSize / Statistics.WORD_SIZE);
         }
         if (tail == head) {
             head = tail = null;
@@ -83,7 +84,7 @@ public class Set {
                 if (config.writeHitPolicy == WritePolicy.WRITE_BACK) {
                     current.setDirty();
                 } else {
-                    stats.incCopyBackedWords(1);
+                    Statistics.incCopyBackedWords(1);
                 }
                 if (updateHitStats)
                     stats.incHit();
@@ -98,7 +99,7 @@ public class Set {
 
     private void writeMiss(long tag) {
         if (config.writeMissPolicy == WritePolicy.WRITE_AROUND) {
-            stats.incCopyBackedWords(1);
+            Statistics.incCopyBackedWords(1);
             stats.incMiss();
         } else {
             readMiss(tag);
@@ -106,14 +107,15 @@ public class Set {
         }
     }
 
-    public void copyBackDirties() {
+    public void copyBackDirties(Statistics stats) {
         if (config.writeHitPolicy != WritePolicy.WRITE_BACK)
             return;
 
         Block current = head;
         while (current != null) {
             if (current.isDirty()) {
-                stats.incCopyBackedWords(config.blockSize / Statistics.WORD_SIZE);
+                Statistics.incCopyBackedWords(config.blockSize / Statistics.WORD_SIZE);
+//                System.out.println("here");
             }
             current = current.next;
         }
