@@ -66,7 +66,7 @@ public class CacheSimulator {
         ret.append("DATA\n");
         ret.append(dcStats.toString());
         ret.append("TRAFFIC (in words)\n");
-        ret.append("demand fetch: ").append(Statistics.getFetchedBlocks() * Statistics.WORD_SIZE).append("\n");
+        ret.append("demand fetch: ").append(Statistics.getFetchedBlocks() * config.blockSize / Statistics.WORD_SIZE).append("\n");
         ret.append("copies back: ").append(Statistics.getCopyBackedWords()).append("\n");
         return ret.toString();
     }
