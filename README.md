@@ -1,11 +1,11 @@
 # Cache Simulator
 
-Configurable CPU cache with LRU replacement policy. Full description [here](https://github.com/radinshayanfar/ca_cache_simulator/blob/master/project_description.pdf).
+Configurable CPU cache simulator with LRU replacement policy. Full description [here](https://github.com/radinshayanfar/ca_cache_simulator/blob/master/project_description.pdf).
 
 ## Input pattern
 ```text
-<block size> - <architecture> - <associativity> - <write hit policy> - <write miss policy> <br>
-<cache(s) size> <br>
+<block size> - <architecture> - <associativity> - <write hit policy> - <write miss policy>
+<cache(s) size>
 <request type> <address> <optional description - will be ignored>
 ```
 \<block size>: Should be in power of 2 <br>
